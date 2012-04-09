@@ -6,20 +6,25 @@ Created:        March 2012
 MIT license:    http://www.opensource.org/licenses/mit-license.php
 
 Source:
- - [Github link here]
+ - https://github.com/bmsapp/jquery-formwatcher
 
 Special thanks to:
  - Brian Grinstead for his bindWithDelay plugin: http://www.briangrinstead.com/files/bindWithDelay/
- - This "insin guy: http://stackoverflow.com/a/155812/128506
+ - This "insin" guy: http://stackoverflow.com/a/155812/128506
 
-Usage: 
-See http://api.jquery.com/bind/
-.bindWithDelay( eventType, [ eventData ], handler(eventObject), timeout, throttle )
-
-Examples:
-$("#foo").bindWithDelay("click", function(e) { }, 100);
-$(window).bindWithDelay("resize", { optional: "eventData" }, callback, 1000);
-$(window).bindWithDelay("resize", callback, 1000, true);
+Basic Usage:
+$('form').formwatcher(
+    {
+        'dirtyEventHandler': function (event, sourceElement) {
+            // that sourceElement is filthy!
+            // handle that 
+        },
+        'cleanEventHandler': function (event, sourceElement) {
+            // the value was defaulted
+            // handle that too
+        }
+    }
+);
 */
 
 if (typeof jQuery === 'undefined') throw ("jQuery could not be found.");
@@ -31,16 +36,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
 
         var settings =
             $.extend(
-                {
-                    'watchHiddenFields': false,
-                    'useKeyUpEvents': true,
-                    'textualChangeEvents': 'blur',
-                    'keyUpOptions': { 'elementSelectors': 'input[type=text], textarea', 'delay': 250 },
-                    'selectingChangeEvents': 'change blur',
-                    'dynamicContainers': [{ 'containerId': null, 'elementAddedEventName': null, 'elementRemovedEventName': null }],
-                    'dirtyEventHandler': null,
-                    'cleanEventHandler': null
-                },
+                this.formwatcher.defaults,
                 options
             );
 
@@ -333,6 +329,17 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
 
         });
 
+    };
+
+    $.fn.formwatcher.defaults = {
+        'watchHiddenFields': false,
+        'useKeyUpEvents': true,
+        'textualChangeEvents': 'blur',
+        'keyUpOptions': { 'elementSelectors': 'input[type=text], textarea', 'delay': 250 },
+        'selectingChangeEvents': 'change blur',
+        'dynamicContainers': [{ 'containerId': null, 'elementAddedEventName': null, 'elementRemovedEventName': null }],
+        'dirtyEventHandler': null,
+        'cleanEventHandler': null
     };
     
 })(jQuery);
