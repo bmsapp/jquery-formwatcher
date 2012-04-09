@@ -1,5 +1,5 @@
 ###jQuery formwatcher plugin
-This little guy's job is to provide a reliable event system for tracking changes to html forms.  You just hand it your dirty and clean event handlers and it will call them when each field becomes either dirty or clean.  
+This little guy's job is to provide a reliable event system for tracking changes to html forms.  You just hand it your dirty and clean event handlers and it will call them when your users get up in 'dem fields.
 
 The cleanliness of each field is based on the ```defaultValue``` (or equivalent) that was assigned when the page was loaded.  If the value is different from when the form was initially loaded then formwatcher calls it dirty.
 
