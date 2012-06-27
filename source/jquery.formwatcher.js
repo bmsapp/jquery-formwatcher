@@ -12,19 +12,14 @@ Special thanks to:
  - Brian Grinstead for his bindWithDelay plugin: http://www.briangrinstead.com/files/bindWithDelay/
  - This "insin" guy: http://stackoverflow.com/a/155812/128506
 
-Basic Usage:
-$('form').formwatcher(
-    {
-        'dirtyEventHandler': function (event, sourceElement) {
-            // that sourceElement is filthy!
-            // handle that 
-        },
-        'cleanEventHandler': function (event, sourceElement) {
-            // the value was defaulted
-            // handle that too
-        }
-    }
-);
+Usage: 
+See http://api.jquery.com/bind/
+.bindWithDelay( eventType, [ eventData ], handler(eventObject), timeout, throttle )
+
+Examples:
+$("#foo").bindWithDelay("click", function(e) { }, 100);
+$(window).bindWithDelay("resize", { optional: "eventData" }, callback, 1000);
+$(window).bindWithDelay("resize", callback, 1000, true);
 */
 
 if (typeof jQuery === 'undefined') throw ("jQuery could not be found.");
@@ -130,6 +125,10 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                 checkOneField: function (element) {
 
                     // TODO: Handle HTML 5 input types someday
+                    
+                    if ($(element).not(settings.ignoreFieldsSelector).length == 0) {
+                        return false;
+                    }
 
                     var type = element.type;
                     var isDirty = false;
@@ -283,7 +282,8 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                         );
                     }
 
-                    if (settings.useKeyUpEvents && settings.keyUpOptions) {
+                    if (settings.useKeyUpEvents && settings.keyUpOptions) 
+                    {
                         $(form).bindWithDelay(
                             'keyup', 
                             function (event) {
@@ -339,7 +339,8 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
         'selectingChangeEvents': 'change blur',
         'dynamicContainers': [{ 'containerId': null, 'elementAddedEventName': null, 'elementRemovedEventName': null }],
         'dirtyEventHandler': null,
-        'cleanEventHandler': null
+        'cleanEventHandler': null,
+        'ignoreFieldsSelector': '.formwatcher-ignore'
     };
     
 })(jQuery);
