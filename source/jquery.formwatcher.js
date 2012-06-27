@@ -11,15 +11,6 @@ Source:
 Special thanks to:
  - Brian Grinstead for his bindWithDelay plugin: http://www.briangrinstead.com/files/bindWithDelay/
  - This "insin" guy: http://stackoverflow.com/a/155812/128506
-
-Usage: 
-See http://api.jquery.com/bind/
-.bindWithDelay( eventType, [ eventData ], handler(eventObject), timeout, throttle )
-
-Examples:
-$("#foo").bindWithDelay("click", function(e) { }, 100);
-$(window).bindWithDelay("resize", { optional: "eventData" }, callback, 1000);
-$(window).bindWithDelay("resize", callback, 1000, true);
 */
 
 if (typeof jQuery === 'undefined') throw ("jQuery could not be found.");
