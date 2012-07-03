@@ -26,92 +26,98 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                 options
             );
 
-        var methods = {
+        var publicMethods = {
+
             init: function () {
 
-                var form = this;
+                return this.each(
+                    function () {
+                    
+                        var form = this;
 
-                // setup events
-                helpers.bindCustom(form);
-                helpers.bindTextual(form);
-                helpers.bindSelecting(form);
+                        // setup events
+                        privateMethods.bindCustom(form);
+                        privateMethods.bindTextual(form);
+                        privateMethods.bindSelecting(form);
 
-                $.each(
-                    settings.dynamicContainers,
-                    function (i) 
-                    {
-                        if (settings.dynamicContainers[i].containerId) 
-                        {
-                            var selector = '#' + settings.dynamicContainers[i].containerId;
-                            var container = $(selector);
+                        $.each(
+                            settings.dynamicContainers,
+                            function (i) 
+                            {
+                                if (settings.dynamicContainers[i].containerId) 
+                                {
+                                    var selector = '#' + settings.dynamicContainers[i].containerId;
+                                    var container = $(selector);
                         
-                            if (container.length) {
-                                container.data('initialState.formwatcher', container[0].innerHTML);
-                            }
-                        
-                            if (settings.dynamicContainers[i].elementAddedEventName) {
-                                $(form).bind(
-                                    settings.dynamicContainers[i].elementAddedEventName + "." + settings.dynamicContainers[i].containerId, 
-                                    function (event) {
-                                    
-                                        helpers.checkDynamic($(event.target).closest(selector)[0]);
-                                    
+                                    if (container.length) {
+                                        container.data('initialState.formwatcher', container[0].innerHTML);
                                     }
-                                );
-                            }
                         
-                            if (settings.dynamicContainers[i].elementRemovedEventName) {
-                                $(form).bind(
-                                    settings.dynamicContainers[i].elementRemovedEventName + "." + settings.dynamicContainers[i].containerId, 
-                                    function (event) {
+                                    if (settings.dynamicContainers[i].elementAddedEventName) {
+                                        $(form).bind(
+                                            settings.dynamicContainers[i].elementAddedEventName + "." + settings.dynamicContainers[i].containerId, 
+                                            function (event) {
                                     
-                                        var dynamicContainer = $(event.target).closest(selector);
+                                                privateMethods.checkDynamic($(event.target).closest(selector)[0]);
                                     
-                                        if (dynamicContainer.length) {
-                                            helpers.checkDynamic(dynamicContainer[0]);
-                                        } else {
-                                            helpers.checkDynamic($(event.target).parent()[0]);
-                                        }
-
+                                            }
+                                        );
                                     }
-                                );
+                        
+                                    if (settings.dynamicContainers[i].elementRemovedEventName) {
+                                        $(form).bind(
+                                            settings.dynamicContainers[i].elementRemovedEventName + "." + settings.dynamicContainers[i].containerId, 
+                                            function (event) {
+                                    
+                                                var dynamicContainer = $(event.target).closest(selector);
+                                    
+                                                if (dynamicContainer.length) {
+                                                    privateMethods.checkDynamic(dynamicContainer[0]);
+                                                } else {
+                                                    privateMethods.checkDynamic($(event.target).parent()[0]);
+                                                }
+
+                                            }
+                                        );
+                                    }
+                                }   
                             }
-                        }   
+                        );
+
+                        // prepare the allDynamicSelectors setting
+                        var selectors = new Array();
+
+                        $.each(
+                            settings.dynamicContainers,
+                            function (i) {
+                                if (settings.dynamicContainers[i].containerId) {
+                                    selectors[i] = '#' + settings.dynamicContainers[i].containerId;
+                                }
+                            }
+                        );
+
+                        settings = $.extend(
+                            settings,
+                            {
+                                allDynamicSelectors: selectors.join(',')
+                            }
+                        );
+
                     }
                 );
-
-                // prepare the allDynamicSelectors setting
-                var selectors = new Array();
-
-                $.each(
-                    settings.dynamicContainers,
-                    function (i) {
-                        if (settings.dynamicContainers[i].containerId) {
-                            selectors[i] = '#' + settings.dynamicContainers[i].containerId;
-                        }
-                    }
-                );
-
-                settings = $.extend(
-                    settings,
-                    {
-                        'allDynamicSelectors': selectors.join(',')
-                    }
-                );
-
             },
             checkAll: function () {
 
-                return helpers.checkAllFields(this);
+                return privateMethods.checkAllFields(this);
 
             },
             checkOne: function (element)
             {
-                return helpers.checkOneField(element);
+                return privateMethods.checkOneField(element);
             }
         };
 
-        var helpers =
+        var privateMethods =
             {
                 checkOneField: function (element) {
 
@@ -171,7 +177,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                             eventSourceElement = dynamicContainer[0];
                             
                             if (!isDirty) {
-                                return helpers.checkDynamic(dynamicContainer[0]);
+                                return privateMethods.checkDynamic(dynamicContainer[0]);
                             }
 
                         } else {
@@ -181,7 +187,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                         eventSourceElement = element;
                     }
                     
-                    helpers.triggerDirtyOrCleanEvent(isDirty, eventSourceElement);
+                    privateMethods.triggerDirtyOrCleanEvent(isDirty, eventSourceElement);
 
                     return isDirty;
                 },
@@ -194,7 +200,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                     if (!initialData) {
                         // an element was added or removed but we aren't tracking the original state of it's container - assume dirty
                         
-                        helpers.triggerDirtyOrCleanEvent(true, containerElement);
+                        privateMethods.triggerDirtyOrCleanEvent(true, containerElement);
                         return true;
                     }
                     
@@ -223,7 +229,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                         
                     }
 
-                    helpers.triggerDirtyOrCleanEvent(isDirty, containerElement);
+                    privateMethods.triggerDirtyOrCleanEvent(isDirty, containerElement);
 
                     return isDirty;
                 },
@@ -242,7 +248,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                     var isDirty = false;
 
                     for (var i = 0; i < form.elements.length; i++) {
-                        if (helpers.checkOneField(form.elements[i])) {
+                        if (privateMethods.checkOneField(form.elements[i])) {
                             isDirty = true;
                         }
                     }
@@ -268,7 +274,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                             settings.textualChangeEvents.split(' ').join('.formwatcher '),
                             'input[type=text], textarea',
                             function () {
-                                helpers.checkOneField(this);
+                                privateMethods.checkOneField(this);
                             }
                         );
                     }
@@ -278,7 +284,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                         $(form).bindWithDelay(
                             'keyup', 
                             function (event) {
-                                helpers.checkOneField(event.srcElement);
+                                privateMethods.checkOneField(event.srcElement);
                             }, 
                             settings.keyUpOptions.delay
                         );
@@ -292,7 +298,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                             settings.selectingChangeEvents.split(' ').join('.formwatcher '),
                             'select, input[type=checkbox], input[type=radio], input[type=hidden]',
                             function (event) {
-                                helpers.checkOneField(event.target);
+                                privateMethods.checkOneField(event.target);
                             }
                         );
 
@@ -303,35 +309,38 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                 }
             };
 
-        return this.each(function () {
+        // defines type-safe (ish?) checkOne method
+        $.fn.formwatcher.checkOne = function(element) {
+            return privateMethods.checkOneField(element);
+        };
 
-            // Tooltip plugin code here
+        // defines type-safe (ish?) checkAll method
+        $.fn.formwatcher.checkAll = function() {
+            return privateMethods.checkAllFields(this);
+        };
 
-            // Method calling logic
-            if (methods[options]) {
-                return methods[options].apply(this, Array.prototype.slice.call(arguments, 1));
-            }
-            else if (typeof options === 'object' || !options) {
-                return methods.init.apply(this, arguments);
-            }
-            else {
-                $.error('Method ' + options + ' does not exist on jQuery.tooltip');
-            }
-
-        });
-
+        // Method calling logic
+        if (publicMethods[options]) {
+            return publicMethods[options].apply(this, Array.prototype.slice.call(arguments, 1));
+        }
+        else if (typeof options === 'object' || !options) {
+            return publicMethods.init.apply(this, arguments);
+        }
+        else {
+            $.error('Method ' + options + ' does not exist on jQuery.tooltip');
+        }
     };
 
     $.fn.formwatcher.defaults = {
-        'watchHiddenFields': false,
-        'useKeyUpEvents': true,
-        'textualChangeEvents': 'blur',
-        'keyUpOptions': { 'elementSelectors': 'input[type=text], textarea', 'delay': 250 },
-        'selectingChangeEvents': 'change blur',
-        'dynamicContainers': [{ 'containerId': null, 'elementAddedEventName': null, 'elementRemovedEventName': null }],
-        'dirtyEventHandler': null,
-        'cleanEventHandler': null,
-        'ignoreFieldsSelector': '.formwatcher-ignore'
+        watchHiddenFields: false,
+        useKeyUpEvents: true,
+        textualChangeEvents: 'blur',
+        keyUpOptions: { elementSelectors: 'input[type=text], textarea', delay: 250 },
+        selectingChangeEvents: 'change blur',
+        dynamicContainers: [{ containerId: null, elementAddedEventName: null, elementRemovedEventName: null }],
+        dirtyEventHandler: null,
+        cleanEventHandler: null,
+        ignoreFieldsSelector: '.formwatcher-ignore'
     };
     
 })(jQuery);
