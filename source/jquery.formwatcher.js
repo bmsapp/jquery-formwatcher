@@ -22,7 +22,7 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
 
         var settings =
             $.extend(
-                this.formwatcher.defaults,
+                $.fn.formwatcher.defaults,
                 options
             );
 
@@ -125,6 +125,10 @@ if (typeof $.fn.bindWithDelay === 'undefined') throw ("A required plugin 'bindWi
                     
                     if ($(element).not(settings.ignoreFieldsSelector).length == 0) {
                         return false;
+                    }
+
+                    if (element instanceof $) {
+                        element = element[0];
                     }
 
                     var type = element.type;
